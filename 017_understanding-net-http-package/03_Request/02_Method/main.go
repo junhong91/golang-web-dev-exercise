@@ -1,29 +1,31 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
+	"net/url"
 	"text/template"
 )
 
 type hotdog int
 
 func (m hotdog) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	data, err := httputil.DumpRequest(req, false)
-	if err != nil {
-		log.Fatal("Error")
-	}
-	fmt.Printf("***request\n")
-	fmt.Println(string(data))
-
-	err = req.ParseForm()
+	err := req.ParseForm()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	tpl.ExecuteTemplate(w, "index.gohtml", req.Form)
+	data := struct {
+		Method      string
+		Submissions url.Values
+	}{
+		req.Method,
+		req.Form,
+	}
+	err = tpl.ExecuteTemplate(w, "index.gohtml", data)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 var tpl *template.Template
