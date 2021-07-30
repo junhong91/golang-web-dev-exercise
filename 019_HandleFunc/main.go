@@ -13,10 +13,15 @@ func c(res http.ResponseWriter, req *http.Request) {
 	io.WriteString(res, "cat cat cat")
 }
 
+func m(res http.ResponseWriter, req *http.Request) {
+	io.WriteString(res, "mow mow mow")
+}
+
 func main() {
 
 	http.HandleFunc("/dog", d)
 	http.HandleFunc("/cat", c)
+	http.HandleFunc("/cow", m)
 
 	http.ListenAndServe(":8080", nil)
 }
